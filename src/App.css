@@ -27,6 +27,8 @@ button.active {
 
 .view {
   flex: 1;
+  display: grid;
+  grid-template-rows: 1fr auto;
 }
 
 .inner-content {
@@ -55,8 +57,28 @@ button.active {
   background-color: Plum;
 }
 
-.basic-tweens {
-  flex: 1;
-  display: grid;
-  grid-template-rows: 1fr auto;
+.circle.circle-color-changed.FireBrick {
+  background-color: FireBrick;
+}
+
+.circle.circle-color-changed.MediumSpringGreen {
+  background-color: MediumSpringGreen;
+}
+
+.paths .inner-content .circle:first-child {
+  position: absolute;
+  top: 30%;
+  left: 30%;
+}
+
+.paths .inner-content .circle:last-child {
+  position: absolute;
+  bottom: 65%;
+  right: 65%;
+}
+
+.paths .inner-content svg {
+  position: absolute;
+  top: 10%;
+  left: 10%;
 }

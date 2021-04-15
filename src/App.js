@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './App.css';
 import gsap from 'gsap';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
+import Xwing from './xwing';
+
+gsap.registerPlugin(MotionPathPlugin);
 
 function App() {
   const [view, setView] = useState('basic-tweens');
@@ -15,6 +19,10 @@ function App() {
         return <Calls />;
       case 'memoization':
         return <Memoization />;
+      case 'components':
+        return <Components />;
+      case 'paths':
+        return <Paths />;
       default:
         return null;
     }
@@ -45,6 +53,18 @@ function App() {
           onClick={() => setView('memoization')}
         >
           Memoization
+        </button>
+        <button
+          className={view === 'components' ? 'active' : ''}
+          onClick={() => setView('components')}
+        >
+          Components
+        </button>
+        <button
+          className={view === 'paths' ? 'active' : ''}
+          onClick={() => setView('paths')}
+        >
+          Paths
         </button>
       </section>
       <section className="content">{renderViews()}</section>
@@ -88,7 +108,7 @@ const BasicTweens = () => {
   };
 
   return (
-    <div className="view basic-tweens">
+    <div className="view">
       <div className="inner-content">
         <div ref={circle1} className="circle" />
         <div ref={circle2} className="circle" />
@@ -168,7 +188,7 @@ const Timelines = () => {
   };
 
   return (
-    <div className="view basic-tweens">
+    <div className="view">
       <div className="inner-content">
         <div ref={circle1} className="circle" />
         <div ref={circle2} className="circle" />
@@ -203,16 +223,17 @@ const Calls = () => {
 
   useEffect(() => {
     /* Controlling already defined timelines */
-    // const tweenCircle = (target, y) => {
-    // const tl = gsap.timeline({ repeat: -1 });
-    // return tl
-    // .to(target, { duration: 2, y, ease: 'power1.out' })
-    // .to(target, { duration: 3, y: -y, ease: 'power1.out' })
-    // .to(target, { duration: 1, y: 0, ease: 'linear' });
-    // };
-    // tl.addLabel('start')
-    // .add(tweenCircle(circle1.current, 300))
-    // .add(tweenCircle(circle2.current, -300), 'start');
+    const tweenCircle = (target, y) => {
+      const tl = gsap.timeline({ repeat: -1 });
+      return tl
+        .to(target, { duration: 2, y, ease: 'power1.out' })
+        .to(target, { duration: 3, y: -y, ease: 'power1.out' })
+        .to(target, { duration: 1, y: 0, ease: 'linear' });
+    };
+    tl.addLabel('start')
+      .add(tweenCircle(circle1.current, 300))
+      .add(tweenCircle(circle2.current, -300), 'start');
+
     /* Function calls in timelines */
     // const tweenCircle = (target, y) => {
     // const tl = gsap.timeline({ repeat: -1 });
@@ -226,15 +247,6 @@ const Calls = () => {
     // .call(blueBgColor)
     // .add(tweenCircle(circle2.current, -300), 'start')
     // .call(changeBgColor);
-    /* Function calls in single timeline */
-    tl.to(circle1.current, { duration: 2, y: 300, ease: 'power1.out' })
-      .to(circle2.current, { duration: 3, y: -300, ease: 'power1.out' })
-      .call(blueBgColor)
-      .to(circle1.current, { duration: 2, y: -300, ease: 'power1.out' })
-      .to(circle2.current, { duration: 3, y: 300, ease: 'power1.out' })
-      .call(changeBgColor)
-      .to(circle1.current, { duration: 2, y: 300, ease: 'power1.out' })
-      .to(circle2.current, { duration: 3, y: -300, ease: 'power1.out' })
   }, [tl, changeBgColor, blueBgColor]);
 
   const handlePlay = () => {
@@ -246,7 +258,7 @@ const Calls = () => {
   };
 
   return (
-    <div className="view basic-tweens">
+    <div className="view">
       <div
         className={`inner-content ${bgColorChanged ? 'bg-color-changed' : ''} ${
           bgColor ?? ''
@@ -272,6 +284,7 @@ const Memoization = () => {
 
   const circle1 = useRef();
   const circle2 = useRef();
+  const bg = useRef();
 
   const tl = useRef(gsap.timeline({ paused: true }));
 
@@ -284,14 +297,33 @@ const Memoization = () => {
   }, []);
 
   useEffect(() => {
-    /* Function calls in single timeline */
+    /* Function calls in timelines */
+    const tweenCircle = (target, y) => {
+      const tl = gsap.timeline({ repeat: -1 });
+      return tl
+        .to(target, { duration: 2, y, ease: 'power1.out' })
+        .to(target, { duration: 3, y: -y, ease: 'power1.out' })
+        .to(target, { duration: 1, y: 0, ease: 'linear' });
+    };
     tl.current
-      .to(circle1.current, { duration: 2, y: 300, ease: 'power1.out' })
-      .to(circle2.current, { duration: 3, y: -300, ease: 'power1.out' })
+      .addLabel('start')
+      .add(tweenCircle(circle1.current, 300))
       .call(blueBgColor)
-      .to(circle1.current, { duration: 2, y: 300, ease: 'power1.out' })
-      .to(circle2.current, { duration: 3, y: -300, ease: 'power1.out' })
+      .add(tweenCircle(circle2.current, -300), 'start')
       .call(changeBgColor);
+
+    /* Use animation library for everything you can */
+    // const tweenCircle = (target, y) => {
+    // const tl = gsap.timeline({ repeat: -1 });
+    // return tl
+    // .to(target, { duration: 2, y, ease: 'power1.out' })
+    // .to(target, { duration: 3, y: -y, ease: 'power1.out' })
+    // .to(target, { duration: 1, y: 0, ease: 'linear' });
+    // };
+    // tl.current.addLabel('start')
+    // .add(tweenCircle(circle1.current, 300))
+    // .add(tweenCircle(circle2.current, -300), 'start')
+    // .to(bg.current, { duration: 0.5, backgroundColor: '#483D8B' }, '-=0.5')
   }, [tl, changeBgColor, blueBgColor]);
 
   const handlePlay = () => {
@@ -303,8 +335,9 @@ const Memoization = () => {
   };
 
   return (
-    <div className="view basic-tweens">
+    <div className="view">
       <div
+        ref={bg}
         className={`inner-content ${bgColorChanged ? 'bg-color-changed' : ''} ${
           bgColor ?? ''
         }`}
@@ -318,4 +351,167 @@ const Memoization = () => {
       </div>
     </div>
   );
+};
+
+const Components = () => {
+  const [circleColorChanged, setCircleColorChanged] = useState(false);
+  const [circleColor, setCircleColor] = useState('FireBrick');
+  const [paused, setPaused] = useState(false);
+
+  const changeCircleColor = useCallback(() => {
+    setCircleColorChanged(!circleColorChanged);
+  }, [circleColorChanged]);
+
+  const greenCircleColor = useCallback(() => {
+    setCircleColor('MediumSpringGreen');
+  }, []);
+
+  const handlePlay = () => {
+    setPaused(false);
+  };
+
+  const handlePause = () => {
+    setPaused(true);
+  };
+
+  return (
+    <div className="view">
+      <div className="inner-content">
+        {Array(2)
+          .fill(null)
+          .map((_, i) => (
+            <ComponentsCircle
+              index={i}
+              key={i}
+              {...{
+                changeCircleColor,
+                circleColor,
+                circleColorChanged,
+                greenCircleColor,
+                paused,
+              }}
+            />
+          ))}
+      </div>
+      <div className="buttons">
+        <button onClick={handlePlay}>Play</button>
+        <button onClick={handlePause}>Pause</button>
+      </div>
+    </div>
+  );
+};
+
+const ComponentsCircle = ({
+  index,
+  circleColorChanged,
+  greenCircleColor,
+  circleColor,
+  changeCircleColor,
+  paused,
+}) => {
+  const ref = useRef();
+
+  const tl = useRef(gsap.timeline({ repeat: -1 }));
+
+  useEffect(() => {
+    tl.current
+      .to(ref.current, {
+        duration: 2,
+        y: index % 2 === 0 ? -300 : 300,
+        ease: 'power1.out',
+      })
+      .call(greenCircleColor)
+      .to(ref.current, {
+        duration: 2,
+        y: index % 2 === 0 ? 300 : -300,
+        ease: 'power1.out',
+      })
+      .call(changeCircleColor);
+  }, [index, tl, changeCircleColor, greenCircleColor]);
+
+  useEffect(() => {
+    if (paused) {
+      tl.current.pause();
+    } else {
+      tl.current.play();
+    }
+  }, [paused]);
+
+  return (
+    <div
+      ref={ref}
+      className={`circle ${circleColorChanged ? 'circle-color-changed' : ''} ${
+        circleColor ?? ''
+      }`}
+    />
+  );
+};
+
+const Paths = () => {
+  const circle1 = useRef();
+  const circle2 = useRef();
+  const xwing = useRef();
+
+  const tl = useRef(gsap.timeline({ paused: true, repeat: -1 }));
+
+  useEffect(() => {
+    tl.current
+      .addLabel('start')
+      .to(circle1.current, {
+        duration: 10,
+        motionPath: paths.ellipse,
+        ease: 'linear',
+      })
+      .to(
+        circle2.current,
+        {
+          reversed: true,
+          duration: 10,
+          motionPath: paths.ellipse,
+          ease: 'linear',
+        },
+        'start'
+      )
+      .to(
+        xwing.current,
+        {
+          duration: 10,
+          motionPath: {
+            path: paths.swirl,
+            autoRotate: true
+          },
+          ease: 'linear',
+        },
+        'start'
+      );
+  }, [tl]);
+
+  const handlePlay = () => {
+    tl.current.play();
+  };
+
+  const handlePause = () => {
+    tl.current.pause();
+  };
+
+  return (
+    <div className="view paths">
+      <div className="inner-content">
+        <div ref={circle1} className="circle" />
+        <div ref={circle2} className="circle" />
+        <Xwing ref={xwing} size={80} />
+      </div>
+      <div className="buttons">
+        <button onClick={handlePlay}>Play</button>
+        <button onClick={handlePause}>Pause</button>
+      </div>
+    </div>
+  );
+};
+
+const paths = {
+  swirl:
+    'M397 54C481 54 522 92 516 130C510 168 439 221 344 251C249 281 68 275 24 209C-20 143 3 71 66 44C97.6938 30.4169 213 24 334 89C455 154 506 240 516 291C526 342 462 429 344 450C226 471 115 430 66 379C17 328 7.99998 151 77 130C146 109 234 156 276 233C318 310 337.585 447.453 298 583C265 696 155 673 109 561C74.4942 476.986 66 357 66 304C66 251 85 17.0001 188 3.00002C251 -5.56312 299 13 334 35C391.571 71.1877 402.556 169.963 371 191C344 209 285 185 285 130C285 92.6369 321 54 397 54Z',
+  ellipse:
+    'M274 233C274 98 202.181 1 133 1C53 0.999996 0.999944 111 0.999969 233C1 377 70 466 133 466C196 466 274 368 274 233Z',
 };
