@@ -1,38 +1,62 @@
-.App {
-  text-align: center;
+main {
+  background-color: DimGray;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.buttons {
+  display: grid;
+  padding: 1rem;
+  grid-gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(1rem, 1fr));
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+button.active {
+  background-color: Teal;
+  color: FloralWhite;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.content {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+}
+
+.view {
+  flex: 1;
+}
+
+.inner-content {
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
 }
 
-.App-link {
-  color: #61dafb;
+.inner-content.bg-color-changed.DarkOrange {
+  background-color: DarkOrange;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.inner-content.bg-color-changed.DarkSlateBlue {
+  background-color: DarkSlateBlue;
+}
+
+.circle {
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  background-color: LightSalmon;
+  margin: 2rem;
+}
+
+.circle:last-of-type {
+  background-color: Plum;
+}
+
+.basic-tweens {
+  flex: 1;
+  display: grid;
+  grid-template-rows: 1fr auto;
 }
